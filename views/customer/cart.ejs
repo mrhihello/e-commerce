@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Your Cart</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .cart-container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 30px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+
+    img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .total {
+      text-align: right;
+      font-size: 1.2em;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    .btn-remove {
+      background: #e53935;
+      color: white;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-checkout {
+      background: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 30px;
+      float: right;
+    }
+
+    .empty {
+      text-align: center;
+      font-size: 1.2em;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="cart-container">
+    <h1>Your Shopping Cart</h1>
+
+    <% if (cart.length === 0) { %>
+      <p class="empty">🛒 Your cart is empty.</p>
+    <% } else { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Total</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% cart.forEach(item => { %>
+            <tr>
+              <td><img src="<%= item.image %>" alt="<%= item.name %>"></td>
+              <td><%= item.name %></td>
+              <td>$<%= item.price.toFixed(2) %></td>
+              <td><%= item.quantity %></td>
+              <td>$<%= (item.price * item.quantity).toFixed(2) %></td>
+              <td>
+                <form method="POST" action="/cart/remove/<%= item.id %>">
+                  <button class="btn-remove" type="submit">Remove</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <div class="total">
+        Total: $<%= total.toFixed(2) %>
+      </div>
+
+      <form action="/checkout" method="GET">
+  <button class="btn-checkout" type="submit">Proceed to Checkout</button>
+</form>
+
+    <% } %>
+  </div>
+</body>
+</html>

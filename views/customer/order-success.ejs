@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Order Success</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .container {
+      max-width: 700px;
+      margin: 50px auto;
+      padding: 40px;
+      background: #fff;
+      text-align: center;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: green;
+      margin-bottom: 10px;
+    }
+    .orders {
+      text-align: left;
+      margin-top: 30px;
+    }
+    .orders li {
+      margin-bottom: 10px;
+    }
+    .btn {
+      background: #4CAF50;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✅ Thank you, <%= orders[0].customerName %>!</h1>
+    <p>Your order has been placed successfully.</p>
+
+    <div class="orders">
+      <h3>🧾 Ordered Items:</h3>
+      <ul>
+        <% orders.forEach(order => { %>
+          <li>
+            <strong><%= order.productName %></strong> — Quantity: <%= order.quantity %> — Total: $<%= order.total.toFixed(2) %>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+
+    <h3>💵 Grand Total: $<%= total.toFixed(2) %></h3>
+
+    <a href="/" class="btn">Back to Home</a>
+  </div>
+</body>
+</html>
+

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "0e945454-d0c1-4fdc-9bf5-997341688153",
+    "productId": "1752140653153",
+    "productName": "cartoon",
+    "productImage": "/images/product-1752140653036-159124252.png",
+    "price": 45,
+    "quantity": 1,
+    "customerName": "sher ali",
+    "customerPhone": "0534534535635",
+    "customerAddress": "gfdsf",
+    "customerLocation": "asdfdsf",
+    "paymentMethod": "cod",
+    "total": 45.9,
+    "tax": 0.9,
+    "status": "delivered",
+    "sellerId": "1751809570158",
+    "createdAt": "2025-07-10T10:01:06.121Z"
+  }
+]

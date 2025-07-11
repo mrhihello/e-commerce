@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset="UTF-8">
+  <title><%= seller.name %> Profile</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head><body>
+
+<header>
+  <h1><%= seller.name %> — <%= seller.approved ? 'Approved' : 'Pending' %></h1>
+  <a href="/admin/dashboard" class="btn">Back to Dashboard</a>
+</header>
+
+<% if(msg){ %><div class="alert success"><%= msg %></div><% } %>
+
+<section>
+  <h2>Seller Info & Controls</h2>
+  <p><strong>Email:</strong> <%= seller.email %></p>
+  <p><strong>Status:</strong> 
+    <span class="<%= seller.blocked ? 'rejected' : 'approved' %>">
+      <%= seller.blocked ? 'Blocked' : (seller.approved ? 'Approved' : 'Pending') %>
+    </span>
+  </p>
+
+  <form action="/admin/<%= seller.blocked ? 'unblock' : 'block' %>-seller/<%= seller.id %>" method="POST">
+    <button class="btn"><%= seller.blocked ? 'Unblock' : 'Block' %></button>
+  </form>
+  
+  <form action="/admin/reject-seller/<%= seller.id %>" method="POST">
+    <button class="btn red">Reject Seller</button>
+  </form>
+</section>
+
+<section>
+  <h2>Send Message</h2>
+  <form action="/admin/message-seller/<%= seller.id %>" method="POST">
+    <input type="text" name="message" placeholder="Your message..." value="<%= seller.message || '' %>">
+    <button class="btn">Send</button>
+  </form>
+</section>
+
+<section>
+  <h2>Products</h2>
+  <% if(products.length === 0){ %>
+    <p>No products listed by this seller.</p>
+  <% } else { products.forEach(p => { %>
+    <div class="card">
+      <div><h3><%= p.name %> — $<%= p.price %></h3><small><%= p.description %></small></div>
+      <div>
+        <form action="/admin/approve-product/<%= p.id %>" method="POST">
+          <button class="btn" disabled="<%= p.approved ? true : false %>"><%= p.approved ? 'Approved' : 'Approve' %></button>
+        </form>
+        <form action="/admin/reject-product/<%= p.id %>" method="POST">
+          <button class="btn red">Remove</button>
+        </form>
+      </div>
+    </div>
+  <% }) } %>
+</section>
+
+</body></html>

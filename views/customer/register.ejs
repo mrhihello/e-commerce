@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Customer Register</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f7f7f7;
+    }
+    .register-box {
+      max-width: 450px;
+      margin: 50px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .btn {
+      width: 100%;
+      background: #007bff;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .error {
+      background: #ffcdd2;
+      color: #b71c1c;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+    }
+    .success {
+      background: #c8e6c9;
+      color: #256029;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+    }
+    a {
+      text-decoration: none;
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-box">
+    <h2>Create Customer Account</h2>
+
+    <% if (error) { %>
+      <div class="error"><%= error %></div>
+    <% } %>
+
+    <% if (success) { %>
+      <div class="success"><%= success %></div>
+    <% } %>
+
+    <form method="POST" action="/auth/customer/register">
+      <input type="text" name="name" value="<%= formData?.name || '' %>" placeholder="Full Name" required>
+      <input type="text" name="phone" value="<%= formData?.phone || '' %>" placeholder="Phone Number" required>
+      <input type="email" name="email" value="<%= formData?.email || '' %>" placeholder="Email Address" required>
+      <input type="password" name="password" placeholder="Password (min 6 chars)" required>
+      <button class="btn" type="submit">Register</button>
+    </form>
+
+    <p style="margin-top: 15px;">Already have an account? <a href="/auth/customer/login">Login here</a></p>
+  </div>
+</body>
+</html>

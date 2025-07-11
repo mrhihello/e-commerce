@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= seller.name %> - Seller Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    .card-img-top {
+      height: 200px;
+      object-fit: contain;
+      background-color: #f8f9fa;
+      padding: 10px;
+    }
+    .status-badge {
+      font-size: 0.8rem;
+      padding: 0.35em 0.65em;
+    }
+    .message-avatar {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .admin-avatar {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 50%;
+      background-color: #198754;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    .stat-card {
+      border-left: 4px solid;
+      transition: transform 0.2s;
+    }
+    .stat-card:hover {
+      transform: translateY(-3px);
+    }
+    .product-actions {
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .card:hover .product-actions {
+      opacity: 1;
+    }
+    .message-card {
+      border-left: 4px solid;
+      transition: all 0.3s ease;
+    }
+    .customer-message {
+      border-left-color: #0d6efd;
+    }
+    .admin-message {
+      border-left-color: #198754;
+    }
+    .message-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .unreplied-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="mb-0">Welcome back, <span class="text-primary"><%= seller.name %></span></h2>
+        <p class="text-muted mb-0">Here's what's happening with your store today</p>
+      </div>
+      <div>
+        <a href="/seller/logout" class="btn btn-outline-secondary">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Alerts -->
+    <% if (msg) { %>
+      <div class="alert alert-success alert-dismissible fade show">
+        <%= msg %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    <% } %>
+    <% if (err) { %>
+      <div class="alert alert-danger alert-dismissible fade show">
+        <%= err %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    <% } %>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+      <div class="col-md-3 mb-3">
+        <div class="card stat-card h-100 border-left-primary">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <div>
+                <h6 class="text-uppercase text-muted">Total Products</h6>
+                <h2 class="mb-0"><%= products.length %></h2>
+              </div>
+              <div class="icon-circle bg-primary text-white">
+                <i class="bi bi-box-seam"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="card stat-card h-100 border-left-success">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <div>
+                <h6 class="text-uppercase text-muted">Active Products</h6>
+                <h2 class="mb-0"><%= products.filter(p => p.approved && !p.blocked).length %></h2>
+              </div>
+              <div class="icon-circle bg-success text-white">
+                <i class="bi bi-check-circle"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="card stat-card h-100 border-left-info">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <div>
+                <h6 class="text-uppercase text-muted">Customer Messages</h6>
+                <h2 class="mb-0"><%= customerMessages.length %></h2>
+              </div>
+              <div class="icon-circle bg-info text-white">
+                <i class="bi bi-envelope"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="card stat-card h-100 border-left-warning">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <div>
+                <h6 class="text-uppercase text-muted">Admin Messages</h6>
+                <h2 class="mb-0"><%= adminMessages.length %></h2>
+              </div>
+              <div class="icon-circle bg-warning text-white">
+                <i class="bi bi-shield-exclamation"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Section -->
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Your Products</h5>
+        <a href="/seller/add-product" class="btn btn-sm btn-primary">
+          <i class="bi bi-plus-lg"></i> Add Product
+        </a>
+      </div>
+      <div class="card-body">
+        <% if (products.length === 0) { %>
+          <div class="text-center py-5">
+            <i class="bi bi-box text-muted" style="font-size: 3rem;"></i>
+            <h5 class="mt-3">No products yet</h5>
+            <p class="text-muted">Get started by adding your first product</p>
+            <a href="/seller/add-product" class="btn btn-primary mt-2">
+              <i class="bi bi-plus-lg"></i> Add Product
+            </a>
+          </div>
+        <% } else { %>
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+            <% products.forEach(p => { %>
+              <div class="col">
+                <div class="card h-100 shadow-sm">
+                  <div class="position-relative">
+                    <img src="<%= p.images && p.images.length > 0 ? p.images[0] : '/images/no-image.png' %>" 
+                         class="card-img-top" 
+                         alt="<%= p.name %>">
+                    <span class="position-absolute top-0 end-0 m-2 status-badge badge 
+                                <%= p.blocked ? 'bg-danger' : (!p.approved ? 'bg-warning text-dark' : 'bg-success') %>">
+                      <%= p.blocked ? 'Blocked' : (!p.approved ? 'Pending' : 'Approved') %>
+                    </span>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title"><%= p.name %></h5>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="text-success fw-bold">$<%= p.price.toFixed(2) %></span>
+                      <span class="text-muted"><%= p.quantity ?? 0 %> in stock</span>
+                    </div>
+                    <p class="card-text text-muted small">
+                      <%= p.description.length > 80 ? p.description.substring(0, 80) + '...' : p.description %>
+                    </p>
+                  </div>
+                  <div class="card-footer bg-white product-actions">
+                    <div class="d-flex justify-content-between">
+                      <a href="/seller/edit-product/<%= p.id %>" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-pencil"></i> Edit
+                      </a>
+                      <form action="/seller/delete-product/<%= p.id %>" method="POST" class="d-inline" 
+                            onsubmit="return confirm('Are you sure you want to delete this product?');">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                          <i class="bi bi-trash"></i> Delete
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Messages Section -->
+    <div class="row">
+      <!-- Customer Messages -->
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+            <h5 class="mb-0">Customer Messages (<%= customerMessages.length %>)</h5>
+            <a href="/seller/messages" class="btn btn-sm btn-light">
+              <i class="bi bi-envelope"></i> View All
+            </a>
+          </div>
+          <div class="card-body">
+            <% if (customerMessages.length === 0) { %>
+              <div class="text-center py-4">
+                <i class="bi bi-check-circle text-success" style="font-size: 3rem;"></i>
+                <h5 class="mt-3">All caught up!</h5>
+                <p class="text-muted">No customer messages need reply</p>
+              </div>
+            <% } else { %>
+              <div class="list-group">
+                <% customerMessages.forEach(m => { %>
+                  <a href="/seller/messages" class="list-group-item list-group-item-action p-3 message-card customer-message">
+                    <% if (!m.reply) { %>
+                      <span class="unreplied-badge badge bg-warning text-dark">
+                        <i class="bi bi-exclamation-circle"></i> Needs reply
+                      </span>
+                    <% } %>
+                    <div class="d-flex gap-3 align-items-center">
+                      <img src="<%= m.productImage || '/images/no-image.png' %>" alt="product" class="message-avatar">
+                      <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                          <h6 class="mb-1"><%= m.productName %></h6>
+                          <small class="text-muted"><%= new Date(m.createdAt).toLocaleString() %></small>
+                        </div>
+                        <p class="mb-1"><%= m.message.length > 50 ? m.message.substring(0, 50) + '...' : m.message %></p>
+                        <% if (m.reply) { %>
+                          <small class="text-success"><i class="bi bi-check-circle"></i> Replied</small>
+                        <% } %>
+                      </div>
+                    </div>
+                  </a>
+                <% }) %>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Messages -->
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-header d-flex justify-content-between align-items-center bg-success text-white">
+            <h5 class="mb-0">Admin Messages (<%= adminMessages.length %>)</h5>
+            <a href="/seller/messages#admin" class="btn btn-sm btn-light">
+              <i class="bi bi-shield"></i> View All
+            </a>
+          </div>
+          <div class="card-body">
+            <% if (adminMessages.length === 0) { %>
+              <div class="text-center py-4">
+                <i class="bi bi-check-circle text-success" style="font-size: 3rem;"></i>
+                <h5 class="mt-3">No admin messages</h5>
+                <p class="text-muted">You're up to date with admin communications</p>
+              </div>
+            <% } else { %>
+              <div class="list-group">
+                <% adminMessages.forEach(m => { %>
+                  <a href="/seller/messages#admin" class="list-group-item list-group-item-action p-3 message-card admin-message">
+                    <% if (!m.reply) { %>
+                      <span class="unreplied-badge badge bg-danger">
+                        <i class="bi bi-exclamation-triangle"></i> Action needed
+                      </span>
+                    <% } %>
+                    <div class="d-flex gap-3 align-items-center">
+                      <div class="admin-avatar">
+                        <i class="bi bi-shield-fill"></i>
+                      </div>
+                      <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                          <h6 class="mb-1">Admin Notification</h6>
+                          <small class="text-muted"><%= new Date(m.date).toLocaleString() %></small>
+                        </div>
+                        <p class="mb-1"><%= m.text.length > 50 ? m.text.substring(0, 50) + '...' : m.text %></p>
+                        <% if (m.reply) { %>
+                          <small class="text-success"><i class="bi bi-check-circle"></i> Replied</small>
+                        <% } %>
+                      </div>
+                    </div>
+                  </a>
+                <% }) %>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="d-flex flex-wrap gap-2 mt-4">
+      <a href="/seller/orders" class="btn btn-outline-success">
+        <i class="bi bi-receipt"></i> View Orders
+      </a>
+      <a href="/seller/add-product" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Add Product
+      </a>
+      <a href="/seller/messages" class="btn btn-outline-info">
+        <i class="bi bi-chat-left-text"></i> All Messages
+      </a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

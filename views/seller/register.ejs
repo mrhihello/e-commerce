@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seller Registration | E-Commerce Platform</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #3498db;  /* Main blue color from your admin */
+      --secondary-color: #2c3e50; /* Dark blue from your admin */
+      --accent-color: #4CAF50;   /* Green for success */
+      --danger-color: #e74c3c;   /* Red for errors */
+      --warning-color: #f39c12;  /* Orange for warnings */
+      --light-bg: #f8f9fa;       /* Light background */
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(44, 62, 80, 0.1) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    
+    .register-container {
+      width: 100%;
+      max-width: 600px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      animation: fadeInUp 0.5s;
+    }
+    
+    .register-header {
+      background-color: var(--secondary-color);
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    
+    .register-header h2 {
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    
+    .register-header p {
+      opacity: 0.8;
+      margin-bottom: 0;
+    }
+    
+    .register-body {
+      padding: 2rem;
+    }
+    
+    .form-floating label {
+      color: #666;
+    }
+    
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      padding: 0.75rem;
+      font-weight: 500;
+    }
+    
+    .btn-primary:hover {
+      background-color: #2980b9;
+      border-color: #2980b9;
+    }
+    
+    .register-footer {
+      text-align: center;
+      padding: 1rem;
+      border-top: 1px solid #eee;
+      background-color: #f9f9f9;
+    }
+    
+    .register-footer a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .register-footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #666;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .seller-badge {
+      background-color: rgba(52, 152, 219, 0.1);
+      color: var(--primary-color);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-left: 0.5rem;
+    }
+    
+    .form-section {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .form-section h5 {
+      color: var(--secondary-color);
+      margin-bottom: 1rem;
+    }
+    
+    .file-upload {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+    
+    .file-upload-btn {
+      border: 2px dashed #ddd;
+      border-radius: 5px;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      width: 100%;
+    }
+    
+    .file-upload-btn:hover {
+      border-color: var(--primary-color);
+      background-color: rgba(52, 152, 219, 0.05);
+    }
+    
+    .file-upload-input {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+    
+    .preview-image {
+      max-width: 100px;
+      max-height: 100px;
+      margin-top: 10px;
+      display: none;
+    }
+    
+    .progress {
+      height: 8px;
+      margin-top: 10px;
+      display: none;
+    }
+    
+    .row {
+      --bs-gutter-x: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <div class="register-header">
+      <h2>Seller Registration <span class="seller-badge">Start Selling</span></h2>
+      <p>Join our marketplace and grow your business</p>
+    </div>
+    
+    <div class="register-body">
+      <% if (error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <i class="fas fa-exclamation-circle me-2"></i>
+          <%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      <% } %>
+      
+      <% if (success) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <i class="fas fa-check-circle me-2"></i>
+          <%= success %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      <% } %>
+
+      <form action="/auth/seller/register" method="POST" enctype="multipart/form-data" novalidate>
+        <!-- Personal Information Section -->
+        <div class="form-section">
+          <h5><i class="fas fa-user me-2"></i> Personal Information</h5>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div class="form-floating">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="firstName" 
+                  name="firstName" 
+                  placeholder="First Name"
+                  value="<%= typeof formData !== 'undefined' ? formData.firstName : '' %>"
+                  required
+                  autocomplete="given-name"
+                  autofocus
+                >
+                <label for="firstName">First Name</label>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="form-floating">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="lastName" 
+                  name="lastName" 
+                  placeholder="Last Name"
+                  value="<%= typeof formData !== 'undefined' ? formData.lastName : '' %>"
+                  required
+                  autocomplete="family-name"
+                >
+                <label for="lastName">Last Name</label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <div class="form-floating">
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email" 
+                name="email" 
+                placeholder="Email Address"
+                value="<%= typeof formData !== 'undefined' ? formData.email : '' %>"
+                required
+                autocomplete="email"
+              >
+              <label for="email">Email Address</label>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <div class="form-floating">
+              <input 
+                type="tel" 
+                class="form-control" 
+                id="phone" 
+                name="phone" 
+                placeholder="Phone Number"
+                value="<%= typeof formData !== 'undefined' ? formData.phone : '' %>"
+                required
+                autocomplete="tel"
+              >
+              <label for="phone">Phone Number</label>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div class="form-floating position-relative">
+                <input 
+                  type="password" 
+                  class="form-control" 
+                  id="password" 
+                  name="password" 
+                  placeholder="Password"
+                  required
+                  autocomplete="new-password"
+                  minlength="8"
+                >
+                <label for="password">Password</label>
+                <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+              </div>
+              <div class="form-text">Minimum 8 characters</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="form-floating position-relative">
+                <input 
+                  type="password" 
+                  class="form-control" 
+                  id="confirmPassword" 
+                  name="confirmPassword" 
+                  placeholder="Confirm Password"
+                  required
+                  autocomplete="new-password"
+                  minlength="8"
+                >
+                <label for="confirmPassword">Confirm Password</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Business Information Section -->
+        <div class="form-section">
+          <h5><i class="fas fa-store me-2"></i> Business Information</h5>
+          <div class="mb-3">
+            <div class="form-floating">
+              <input 
+                type="text" 
+                class="form-control" 
+                id="businessName" 
+                name="businessName" 
+                placeholder="Business/Shop Name"
+                value="<%= typeof formData !== 'undefined' ? formData.businessName : '' %>"
+                required
+              >
+              <label for="businessName">Business/Shop Name</label>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <div class="form-floating">
+              <select class="form-select" id="productCategory" name="productCategory" required>
+                <option value="">Select Category</option>
+                <option value="electronics" <%= typeof formData !== 'undefined' && formData.productCategory === 'electronics' ? 'selected' : '' %>>Electronics</option>
+                <option value="fashion" <%= typeof formData !== 'undefined' && formData.productCategory === 'fashion' ? 'selected' : '' %>>Fashion</option>
+                <option value="home" <%= typeof formData !== 'undefined' && formData.productCategory === 'home' ? 'selected' : '' %>>Home & Garden</option>
+                <option value="beauty" <%= typeof formData !== 'undefined' && formData.productCategory === 'beauty' ? 'selected' : '' %>>Beauty & Health</option>
+                <option value="sports" <%= typeof formData !== 'undefined' && formData.productCategory === 'sports' ? 'selected' : '' %>>Sports & Outdoors</option>
+                <option value="other" <%= typeof formData !== 'undefined' && formData.productCategory === 'other' ? 'selected' : '' %>>Other</option>
+              </select>
+              <label for="productCategory">Product Category</label>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div class="form-floating">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="city" 
+                  name="city" 
+                  placeholder="City"
+                  value="<%= typeof formData !== 'undefined' ? formData.city : '' %>"
+                  required
+                >
+                <label for="city">City</label>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="form-floating">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="country" 
+                  name="country" 
+                  placeholder="Country"
+                  value="<%= typeof formData !== 'undefined' ? formData.country : '' %>"
+                  required
+                >
+                <label for="country">Country</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Verification Documents Section -->
+        <div class="form-section">
+          <h5><i class="fas fa-id-card me-2"></i> Verification Documents</h5>
+          <div class="mb-3">
+            <label class="form-label">Seller Profile Photo (Optional)</label>
+            <div class="file-upload">
+              <div class="file-upload-btn">
+                <i class="fas fa-camera fa-2x mb-2"></i>
+                <p>Click to upload profile photo</p>
+                <small class="text-muted">Recommended size: 500x500px</small>
+                <img id="profilePreview" class="preview-image" alt="Profile Preview">
+              </div>
+              <input type="file" class="file-upload-input" id="profilePhoto" name="profilePhoto" accept="image/*">
+            </div>
+            <div class="progress" id="profileProgress">
+              <div class="progress-bar" role="progressbar"></div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">ID Card (Front)</label>
+              <div class="file-upload">
+                <div class="file-upload-btn">
+                  <i class="fas fa-id-card fa-2x mb-2"></i>
+                  <p>Upload ID Front</p>
+                  <small class="text-muted">JPG, PNG or PDF</small>
+                  <img id="idFrontPreview" class="preview-image" alt="ID Front Preview">
+                </div>
+                <input type="file" class="file-upload-input" id="idFront" name="idFront" accept="image/*,.pdf" required>
+              </div>
+              <div class="progress" id="idFrontProgress">
+                <div class="progress-bar" role="progressbar"></div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">ID Card (Back)</label>
+              <div class="file-upload">
+                <div class="file-upload-btn">
+                  <i class="fas fa-id-card fa-2x mb-2"></i>
+                  <p>Upload ID Back</p>
+                  <small class="text-muted">JPG, PNG or PDF</small>
+                  <img id="idBackPreview" class="preview-image" alt="ID Back Preview">
+                </div>
+                <input type="file" class="file-upload-input" id="idBack" name="idBack" accept="image/*,.pdf" required>
+              </div>
+              <div class="progress" id="idBackProgress">
+                <div class="progress-bar" role="progressbar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="d-grid mt-4">
+          <button type="submit" class="btn btn-primary btn-lg">
+            <i class="fas fa-user-plus me-2"></i> Register as Seller
+          </button>
+        </div>
+      </form>
+    </div>
+    
+    <div class="register-footer">
+      Already have an account? <a href="/auth/seller/login">Sign in here</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Password toggle visibility
+    document.getElementById('togglePassword').addEventListener('click', function() {
+      const passwordInput = document.getElementById('password');
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      this.classList.toggle('fa-eye-slash');
+    });
+
+    // File upload previews
+    function setupFilePreview(inputId, previewId) {
+      const input = document.getElementById(inputId);
+      const preview = document.getElementById(previewId);
+      
+      input.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          const file = this.files[0];
+          
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+              preview.src = e.target.result;
+              preview.style.display = 'block';
+            }
+            
+            reader.readAsDataURL(file);
+          } else {
+            preview.style.display = 'none';
+          }
+        }
+      });
+    }
+
+    setupFilePreview('profilePhoto', 'profilePreview');
+    setupFilePreview('idFront', 'idFrontPreview');
+    setupFilePreview('idBack', 'idBackPreview');
+
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+      const password = document.getElementById('password');
+      const confirmPassword = document.getElementById('confirmPassword');
+      
+      if (password.value.length < 8) {
+        e.preventDefault();
+        alert('Password must be at least 8 characters long');
+        password.focus();
+        return;
+      }
+      
+      if (password.value !== confirmPassword.value) {
+        e.preventDefault();
+        alert('Passwords do not match');
+        confirmPassword.focus();
+        return;
+      }
+      
+      // Additional validation can be added here
+    });
+
+    // Auto-dismiss alerts after 5 seconds
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+      setTimeout(() => {
+        const bsAlert = new bootstrap.Alert(alert);
+        bsAlert.close();
+      }, 5000);
+    });
+  </script>
+</body>
+</html>

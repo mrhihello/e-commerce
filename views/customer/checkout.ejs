@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout | Sher Ali's Store</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --primary-dark: #3e8e41;
+      --secondary: #EF4444;
+      --dark: #333;
+      --light: #f8f9fa;
+      --gray: #6c757d;
+      --border: #e9ecef;
+      --shadow: 0 5px 15px rgba(0,0,0,0.08);
+      --success: #28a745;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f7fa;
+      color: var(--dark);
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .checkout-container {
+      display: flex;
+      max-width: 1200px;
+      margin: 40px auto;
+      gap: 30px;
+      padding: 20px;
+    }
+    
+    /* Order Summary Section */
+    .order-summary {
+      flex: 1;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 30px;
+      height: fit-content;
+    }
+    
+    .order-summary h2 {
+      margin-top: 0;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .order-summary h2 i {
+      color: var(--primary);
+    }
+    
+    .summary-items {
+      max-height: 400px;
+      overflow-y: auto;
+      margin: 20px 0;
+    }
+    
+    .summary-item {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .summary-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    
+    .summary-item img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      border-radius: 6px;
+      background: var(--light);
+    }
+    
+    .summary-item-details {
+      flex: 1;
+    }
+    
+    .summary-item-details h4 {
+      margin: 0 0 5px;
+      font-size: 16px;
+    }
+    
+    .summary-item-details p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+    
+    .price {
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .summary-totals {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    
+    .summary-row.total {
+      font-weight: 600;
+      font-size: 18px;
+      margin-top: 15px;
+    }
+    
+    /* Checkout Form Section */
+    .checkout-form {
+      flex: 1;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 30px;
+    }
+    
+    .checkout-form h2 {
+      margin-top: 0;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .checkout-form h2 i {
+      color: var(--primary);
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 15px;
+      transition: all 0.3s;
+    }
+    
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+      outline: none;
+    }
+    
+    .payment-methods {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    
+    .payment-method {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+    
+    .payment-method.selected {
+      border-color: var(--primary);
+      background-color: rgba(76, 175, 80, 0.05);
+    }
+    
+    .payment-method i {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+    
+    .payment-method .cod i {
+      color: var(--secondary);
+    }
+    
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 25px;
+      text-align: center;
+    }
+    
+    .btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .checkout-container {
+        flex-direction: column;
+      }
+      
+      .order-summary, .checkout-form {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="checkout-container">
+    <!-- Order Summary Section -->
+    <div class="order-summary">
+      <h2><i class="fas fa-shopping-bag"></i> Order Summary</h2>
+      
+      <div class="summary-items">
+        <% if (cart && cart.length > 0) { %>
+          <% cart.forEach(item => { %>
+            <div class="summary-item">
+              <img src="<%= item.image || '/images/default.jpg' %>" alt="<%= item.name %>">
+              <div class="summary-item-details">
+                <h4><%= item.name %></h4>
+                <p>Quantity: <%= item.quantity %></p>
+                <p class="price">$<%= (item.price * item.quantity).toFixed(2) %></p>
+              </div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="summary-item">
+            <img src="<%= product.images?.[0] || '/images/default.jpg' %>" alt="<%= product.name %>">
+            <div class="summary-item-details">
+              <h4><%= product.name %></h4>
+              <p>Quantity: <%= quantity %></p>
+              <p class="price">$<%= (product.price * quantity).toFixed(2) %></p>
+            </div>
+          </div>
+        <% } %>
+      </div>
+      
+      <div class="summary-totals">
+        <div class="summary-row">
+          <span>Subtotal:</span>
+          <span>$<%= (cart && cart.length > 0 ? 
+            cart.reduce((total, item) => total + (item.price * item.quantity), 0) : 
+            product.price * quantity).toFixed(2) %></span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping:</span>
+          <span>Free</span>
+        </div>
+        <div class="summary-row">
+          <span>Tax:</span>
+          <span>$0.00</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total:</span>
+          <span>$<%= (cart && cart.length > 0 ? 
+            cart.reduce((total, item) => total + (item.price * item.quantity), 0) : 
+            product.price * quantity).toFixed(2) %></span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Checkout Form Section -->
+    <div class="checkout-form">
+      <h2><i class="fas fa-user-circle"></i> Customer Information</h2>
+      
+      <form method="POST" action="/checkout">
+        <!-- Hidden fields to send product + quantity info -->
+        <% if (cart && cart.length > 0) { %>
+          <% cart.forEach(item => { %>
+            <input type="hidden" name="items[]" value="<%= JSON.stringify(item) %>">
+          <% }) %>
+        <% } else { %>
+          <input type="hidden" name="items[]" value="<%= JSON.stringify(product) %>">
+        <% } %>
+        
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" class="form-control" required placeholder="Name">
+        </div>
+        
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" name="phone" class="form-control" required placeholder="+1234567890">
+        </div>
+        
+        <div class="form-group">
+          <label for="address">Shipping Address</label>
+          <input type="text" id="address" name="address" class="form-control" required placeholder="123 Main St">
+        </div>
+        
+        <div class="form-group">
+          <label for="location">City/Location</label>
+          <input type="text" id="location" name="location" class="form-control" required placeholder="City">
+        </div>
+        
+        <div class="form-group">
+          <label>Payment Method</label>
+          <div class="payment-methods">
+            <div class="payment-method cod" onclick="selectPayment('cod')">
+              <i class="fas fa-money-bill-wave"></i>
+              <p>Cash on Delivery</p>
+              <input type="radio" name="paymentMethod" value="cod" id="cod" checked style="display: none;">
+            </div>
+            <div class="payment-method" onclick="selectPayment('bank')">
+              <i class="fas fa-university"></i>
+              <p>Bank Transfer</p>
+              <input type="radio" name="paymentMethod" value="bank" id="bank" style="display: none;">
+            </div>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn">
+          <i class="fas fa-shopping-cart"></i> Place Order
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Payment method selection
+    function selectPayment(method) {
+      document.querySelectorAll('.payment-method').forEach(el => {
+        el.classList.remove('selected');
+      });
+      
+      document.querySelector(`.payment-method.${method}`)?.classList.add('selected');
+      document.getElementById(method).checked = true;
+    }
+    
+    // Initialize selected payment method
+    document.addEventListener('DOMContentLoaded', function() {
+      selectPayment('cod');
+    });
+  </script>
+</body>
+</html>

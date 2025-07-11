@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Previous head content remains the same -->
+  <style>
+    /* Add these new styles to your existing CSS */
+    
+    /* Message notification badge */
+    .message-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      font-size: 0.6rem;
+      padding: 3px 6px;
+      border-radius: 50%;
+      background-color: var(--danger-color);
+      color: white;
+    }
+    
+    /* Message alert section */
+    .message-alert {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      max-width: 350px;
+      display: none;
+    }
+    
+    /* Message blocks */
+    .msg-block {
+      border-left: 3px solid var(--primary-color);
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: var(--light-gray);
+      border-radius: 0 4px 4px 0;
+    }
+    
+    .msg-block.unread {
+      border-left-color: var(--danger-color);
+      background-color: rgba(231, 74, 59, 0.1);
+    }
+    
+    .msg-block .msg-meta {
+      font-size: 0.8rem;
+      color: var(--secondary-color);
+    }
+    
+    .msg-block .msg-reply {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border-color);
+    }
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+  <!-- Message Alert Notification -->
+  <div class="message-alert alert alert-warning alert-dismissible fade show" role="alert" id="messageAlert">
+    <strong>New Reply!</strong> <span id="alertMessage"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
+  <!-- Previous body content remains the same until the admin messages section -->
+  
+  <!-- Replace the admin messages section with this enhanced version -->
+  <% if (seller.adminMessages && seller.adminMessages.length > 0) { %>
+    <div class="detail-section">
+      <h3 class="h6">
+        <i class="fas fa-envelope me-2" aria-hidden="true"></i>Messages
+        <% 
+          const unreadCount = seller.adminMessages.filter(msg => msg.reply && !msg.replyRead).length;
+          if (unreadCount > 0) { %>
+            <span class="badge bg-danger ms-2"><%= unreadCount %> unread</span>
+        <% } %>
+      </h3>
+      
+      <div class="admin-msgs mt-3">
+        <% seller.adminMessages.forEach(msg => { %>
+          <div class="msg-block <%= msg.reply && !msg.replyRead ? 'unread' : '' %>" data-msg-id="<%= msg.id %>">
+            <div class="msg-content">
+              <p><strong>Your message:</strong> <%= msg.text %></p>
+              <p class="msg-meta">Sent: <%= new Date(msg.date).toLocaleString() %></p>
+            </div>
+            
+            <% if (msg.reply) { %>
+              <div class="msg-reply">
+                <p><strong>Seller reply:</strong> <%= msg.reply %></p>
+                <p class="msg-meta">Replied: <%= new Date(msg.repliedAt).toLocaleString() %></p>
+              </div>
+            <% } else { %>
+              <p class="text-muted"><em>No reply yet</em></p>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- Rest of your HTML remains the same -->
+
+  <script>
+    // Add these new functions to your existing JavaScript
+    
+    // Mark message as read
+    async function markMessageAsRead(messageId) {
+      try {
+        const response = await fetch(`/admin/mark-message-read/${messageId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+        
+        if (!response.ok) {
+          console.error('Failed to mark message as read');
+        }
+      } catch (error) {
+        console.error('Error marking message as read:', error);
+      }
+    }
+    
+    // Show new message alert
+    function showMessageAlert(sellerName, messageText) {
+      const alert = document.getElementById('messageAlert');
+      const alertMessage = document.getElementById('alertMessage');
+      
+      alertMessage.textContent = `From ${sellerName}: ${messageText.substring(0, 50)}${messageText.length > 50 ? '...' : ''}`;
+      alert.style.display = 'block';
+      
+      // Auto-hide after 10 seconds
+      setTimeout(() => {
+        alert.style.display = 'none';
+      }, 10000);
+    }
+    
+    // Initialize real-time message updates (using Socket.io or polling)
+    function initMessageUpdates() {
+      // For Socket.io implementation:
+      // const socket = io();
+      // socket.on('new-seller-reply', (data) => {
+      //   showMessageAlert(data.sellerName, data.message);
+      //   // Refresh messages section
+      //   fetchSellerMessages(data.sellerId);
+      // });
+      
+      // For polling implementation:
+      setInterval(() => {
+        checkForNewReplies();
+      }, 30000); // Check every 30 seconds
+    }
+    
+    // Check for new replies (polling implementation)
+    async function checkForNewReplies() {
+      try {
+        const response = await fetch('/admin/check-replies');
+        const data = await response.json();
+        
+        if (data.newReplies && data.newReplies.length > 0) {
+          data.newReplies.forEach(reply => {
+            showMessageAlert(reply.sellerName, reply.message);
+            
+            // Mark as read on the server
+            fetch(`/admin/mark-message-read/${reply.messageId}`, {
+              method: 'POST'
+            });
+            
+            // Update the UI if we're on the seller's page
+            const msgBlock = document.querySelector(`.msg-block[data-msg-id="${reply.messageId}"]`);
+            if (msgBlock) {
+              msgBlock.classList.add('unread');
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error checking for replies:', error);
+      }
+    }
+    
+    // Update the DOMContentLoaded event listener to include:
+    document.addEventListener('DOMContentLoaded', function() {
+      // Previous initialization code...
+      
+      // Initialize message functionality
+      initMessageUpdates();
+      
+      // Mark messages as read when clicked
+      document.querySelectorAll('.msg-block.unread').forEach(block => {
+        block.addEventListener('click', function() {
+          const messageId = this.getAttribute('data-msg-id');
+          this.classList.remove('unread');
+          markMessageAsRead(messageId);
+        });
+      });
+      
+      // Fix for product rejection filtering
+      document.querySelectorAll('#productFilterTabs .nav-link').forEach(tab => {
+        tab.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          document.querySelectorAll('#productFilterTabs .nav-link').forEach(t => {
+            t.classList.remove('active');
+          });
+          this.classList.add('active');
+          
+          const filter = this.getAttribute('data-filter');
+          
+          document.querySelectorAll('#productsView .product-card').forEach(card => {
+            const status = card.getAttribute('data-status');
+            
+            if (filter === 'all') {
+              card.style.display = 'block';
+            } else if (filter === 'approved' && status === 'approved') {
+              card.style.display = 'block';
+            } else if (filter === 'pending' && status === 'pending') {
+              card.style.display = 'block';
+            } else if (filter === 'rejected' && status === 'rejected') {
+              card.style.display = 'block';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>

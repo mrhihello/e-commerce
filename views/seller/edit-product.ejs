@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit <%= product.name %> - Seller Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #4cc9f0;
+    }
+    
+    body {
+      background-color: #f8f9fa;
+    }
+    
+    .edit-product-card {
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+      border: none;
+      overflow: hidden;
+    }
+    
+    .form-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 1.5rem;
+    }
+    
+    .form-body {
+      padding: 2rem;
+    }
+    
+    .form-label {
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-control, .form-select {
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ced4da;
+      transition: all 0.3s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 0.25rem rgba(76, 201, 240, 0.25);
+    }
+    
+    .btn-save {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border: none;
+      padding: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.3s;
+    }
+    
+    .btn-save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
+    }
+    
+    .image-preview-container {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    
+    .current-image {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 2px solid #dee2e6;
+    }
+    
+    .file-upload-wrapper {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    
+    .file-upload-label {
+      display: block;
+      padding: 1.5rem;
+      border: 2px dashed #dee2e6;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .file-upload-label:hover {
+      border-color: var(--accent-color);
+      background-color: rgba(76, 201, 240, 0.05);
+    }
+    
+    .file-upload-input {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+    
+    .help-text {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-top: 0.25rem;
+    }
+    
+    .error-message {
+      color: #dc3545;
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+    }
+    
+    .back-btn {
+      color: var(--primary-color);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .back-btn:hover {
+      color: var(--secondary-color);
+    }
+    
+    .remove-image-btn {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    
+    .image-wrapper {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+    
+    .new-image-preview {
+      width: 120px;
+      height: 120px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 2px dashed #dee2e6;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <a href="/seller/dashboard" class="back-btn">
+          <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
+        </a>
+        
+        <div class="card edit-product-card">
+          <div class="form-header">
+            <h2 class="h4 mb-0 text-center"><i class="bi bi-pencil-square me-2"></i>Edit Product</h2>
+            <p class="text-center mb-0"><%= product.name %></p>
+          </div>
+          
+          <div class="form-body">
+            <% if (error) { %>
+              <div class="alert alert-danger alert-dismissible fade show">
+                <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            <% } %>
+            <% if (success) { %>
+              <div class="alert alert-success alert-dismissible fade show">
+                <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            <% } %>
+            
+            <form action="/seller/edit-product/<%= product.id %>" method="POST" enctype="multipart/form-data" id="editProductForm">
+              <div class="mb-4">
+                <label for="productName" class="form-label">Product Name</label>
+                <input type="text" class="form-control" id="productName" name="name" 
+                       value="<%= product.name %>" required>
+              </div>
+              
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <label for="productPrice" class="form-label">Price ($)</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control" id="productPrice" name="price" 
+                           step="0.01" min="0.01" value="<%= product.price %>" required>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <label for="productQuantity" class="form-label">Quantity</label>
+                  <input type="number" class="form-control" id="productQuantity" name="quantity" 
+                         min="1" value="<%= product.quantity || 1 %>" required>
+                </div>
+              </div>
+              
+              <div class="mb-4">
+                <label for="productDescription" class="form-label">Description</label>
+                <textarea class="form-control" id="productDescription" name="description" 
+                          rows="5" required><%= product.description %></textarea>
+                <div class="help-text">Describe your product in detail (max 1000 characters)</div>
+                <div id="charCount" class="text-end text-muted small"><%= product.description.length %>/1000</div>
+              </div>
+              
+              <div class="mb-4">
+                <label class="form-label">Current Images</label>
+                <% if (product.images && product.images.length > 0) { %>
+                  <div class="d-flex flex-wrap gap-3">
+                    <% product.images.forEach((img, index) => { %>
+                      <div class="image-wrapper">
+                        <img src="<%= img %>" alt="Product image" class="current-image">
+                        <button type="button" class="remove-image-btn" data-index="<%= index %>">
+                          <i class="bi bi-x"></i>
+                        </button>
+                      </div>
+                    <% }) %>
+                  </div>
+                  <div class="help-text mt-2">Click the red X to mark images for removal</div>
+                <% } else { %>
+                  <p class="text-muted">No images currently uploaded</p>
+                <% } %>
+              </div>
+              
+              <div class="mb-4">
+                <label class="form-label">Add New Images</label>
+                <div class="file-upload-wrapper">
+                  <label for="productImages" class="file-upload-label">
+                    <i class="bi bi-cloud-arrow-up fs-1 text-muted mb-2 d-block"></i>
+                    <h5 class="h6">Drag & drop images here or click to browse</h5>
+                    <p class="small text-muted mb-0">Upload up to 5 images (JPEG, PNG)</p>
+                  </label>
+                  <input type="file" class="file-upload-input" id="productImages" 
+                         name="images" accept="image/*" multiple>
+                </div>
+                
+                <div class="image-preview-container" id="imagePreviewContainer">
+                  <!-- New image previews will appear here -->
+                </div>
+                <div class="help-text">First image will be used as the main display image</div>
+              </div>
+              
+              <div class="d-flex justify-content-between mt-4">
+                <a href="/seller/dashboard" class="btn btn-outline-secondary">
+                  <i class="bi bi-x-circle me-2"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-save text-white">
+                  <i class="bi bi-save me-2"></i> Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Character counter for description
+    const descriptionTextarea = document.getElementById('productDescription');
+    const charCount = document.getElementById('charCount');
+    
+    descriptionTextarea.addEventListener('input', function() {
+      const currentLength = this.value.length;
+      charCount.textContent = `${currentLength}/1000`;
+      
+      if (currentLength > 1000) {
+        charCount.classList.add('text-danger');
+        charCount.classList.remove('text-muted');
+      } else {
+        charCount.classList.remove('text-danger');
+        charCount.classList.add('text-muted');
+      }
+    });
+    
+    // Image preview functionality for new images
+    const fileUpload = document.getElementById('productImages');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    
+    fileUpload.addEventListener('change', function() {
+      previewContainer.innerHTML = '';
+      
+      if (this.files.length > 5) {
+        alert('You can only upload up to 5 images');
+        this.value = '';
+        return;
+      }
+      
+      for (let i = 0; i < this.files.length; i++) {
+        const file = this.files[i];
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.classList.add('new-image-preview');
+          img.style.display = 'block';
+          previewContainer.appendChild(img);
+        }
+        
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    // Drag and drop functionality
+    const fileUploadLabel = document.querySelector('.file-upload-label');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      fileUploadLabel.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+      fileUploadLabel.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+      fileUploadLabel.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+      fileUploadLabel.classList.add('bg-light');
+      fileUploadLabel.style.borderColor = '#4cc9f0';
+    }
+    
+    function unhighlight() {
+      fileUploadLabel.classList.remove('bg-light');
+      fileUploadLabel.style.borderColor = '#dee2e6';
+    }
+    
+    fileUploadLabel.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      fileUpload.files = files;
+      const event = new Event('change');
+      fileUpload.dispatchEvent(event);
+    }
+    
+    // Mark images for removal
+    document.querySelectorAll('.remove-image-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const index = this.getAttribute('data-index');
+        const wrapper = this.parentElement;
+        
+        // Create hidden input to mark image for removal
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'removeImages[]';
+        input.value = index;
+        document.getElementById('editProductForm').appendChild(input);
+        
+        // Visually mark as removed
+        wrapper.style.opacity = '0.5';
+        wrapper.style.border = '2px solid #dc3545';
+        this.disabled = true;
+      });
+    });
+  </script>
+</body>
+</html>

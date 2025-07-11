@@ -1,0 +1,109 @@
+[
+  {
+    "id": "1751819764129",
+    "name": "sher ali",
+    "price": 667,
+    "description": "fguifgsgfgsf",
+    "image": "/images/product-1751819764109-920284766.png",
+    "sellerId": "1751809570158",
+    "createdAt": "2025-07-06T16:36:04.129Z",
+    "approved": true,
+    "updatedAt": "2025-07-09T21:46:28.190Z",
+    "images": [
+      "/images/product-1751910071025-50654717.png"
+    ],
+    "quantity": 60,
+    "rejected": false
+  },
+  {
+    "id": "1751882273908",
+    "name": "hi hello",
+    "price": 6.76e+85,
+    "description": "rfrgfr",
+    "images": [
+      "/images/product-1751882273859-250164816.png",
+      "/images/product-1751882273879-636424704.png",
+      "/images/product-1751882273894-584627207.png"
+    ],
+    "sellerId": "1751809570158",
+    "sellerName": "sher alii",
+    "createdAt": "2025-07-07T09:57:53.908Z",
+    "approved": true,
+    "blocked": false,
+    "updatedAt": "2025-07-09T12:52:05.381Z",
+    "quantity": 51,
+    "rejected": false
+  },
+  {
+    "id": "1751990942831",
+    "name": "car",
+    "price": 234,
+    "quantity": 55,
+    "description": "hi",
+    "images": [
+      "/images/product-1751990942791-77286354.png",
+      "/images/product-1751990942805-523447875.png",
+      "/images/product-1751990942817-727926515.png"
+    ],
+    "sellerId": "1751809570158",
+    "sellerName": "sher alii",
+    "approved": true,
+    "blocked": false,
+    "createdAt": "2025-07-08T16:09:02.831Z",
+    "updatedAt": "2025-07-08T19:20:28.298Z"
+  },
+  {
+    "id": "1752084651095",
+    "name": "sher ali",
+    "price": 56,
+    "quantity": 45,
+    "description": "its good for health",
+    "images": [
+      "/images/product-1752084651058-322324284.png",
+      "/images/product-1752084651063-24941266.png",
+      "/images/product-1752084651079-857219882.png"
+    ],
+    "sellerId": "1751809570158",
+    "sellerName": "sher alii",
+    "approved": true,
+    "blocked": false,
+    "createdAt": "2025-07-09T18:10:51.095Z",
+    "updatedAt": "2025-07-09T18:11:25.602Z"
+  },
+  {
+    "id": "1752097667490",
+    "name": "game",
+    "price": 56,
+    "quantity": 45,
+    "description": "its a game",
+    "images": [
+      "/images/product-1752097667337-984729714.png",
+      "/images/product-1752097667390-354097217.png",
+      "/images/product-1752097667430-855354725.png"
+    ],
+    "sellerId": "1751809570158",
+    "sellerName": "sher alii",
+    "approved": true,
+    "blocked": false,
+    "createdAt": "2025-07-09T21:47:47.490Z",
+    "updatedAt": "2025-07-09T21:48:10.228Z"
+  },
+  {
+    "id": "1752140653153",
+    "name": "cartoon",
+    "price": 45,
+    "quantity": 51,
+    "description": "its a cartoon",
+    "images": [
+      "/images/product-1752140653036-159124252.png",
+      "/images/product-1752140653065-669148228.png",
+      "/images/product-1752140653101-951788239.png"
+    ],
+    "sellerId": "1751809570158",
+    "sellerName": "sher alii",
+    "approved": true,
+    "blocked": false,
+    "createdAt": "2025-07-10T09:44:13.153Z",
+    "updatedAt": "2025-07-10T09:44:37.688Z"
+  }
+]

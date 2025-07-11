@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seller Messages</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    /* Custom Styles */
+    .message-section {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+    }
+    .customer-header {
+      background: linear-gradient(135deg, #4361ee, #3a0ca3);
+      color: white;
+    }
+    .admin-header {
+      background: linear-gradient(135deg, #2b9348, #007f5f);
+      color: white;
+    }
+    .message-card {
+      border: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      margin-bottom: 15px;
+    }
+    .customer-card {
+      border-left: 4px solid #4361ee;
+      background-color: #f8f9ff;
+    }
+    .admin-card {
+      border-left: 4px solid #2b9348;
+      background-color: #f0fff4;
+    }
+    .message-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+    .product-thumb {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid #eee;
+    }
+    .message-time {
+      font-size: 0.75rem;
+      color: #6c757d;
+    }
+    .unreplied-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+    }
+    .reply-form {
+      background: white;
+      border-radius: 6px;
+      padding: 15px;
+      margin-top: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .message-content {
+      background: white;
+      padding: 12px;
+      border-radius: 6px;
+      border-left: 3px solid #dee2e6;
+    }
+    .divider {
+      border-top: 2px dashed #dee2e6;
+      margin: 20px 0;
+      opacity: 0.5;
+    }
+    .status-badge {
+      font-size: 0.7rem;
+      padding: 0.35em 0.65em;
+    }
+    .tab-content {
+      padding: 20px;
+      background: white;
+      border-radius: 0 0 10px 10px;
+    }
+    .filter-buttons .btn {
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    .message-tab {
+      display: none;
+    }
+    .message-tab.active {
+      display: block;
+    }
+    .new-message {
+      background-color: rgba(13, 110, 253, 0.1);
+    }
+    .seen-message {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h1 class="h3 mb-1">
+          <i class="bi bi-chat-left-text-fill me-2"></i>Message Center
+        </h1>
+        <p class="text-muted mb-0">Manage all customer and admin communications</p>
+      </div>
+      <a href="/seller/dashboard" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+
+    <!-- Message Type Tabs -->
+    <div class="card mb-4">
+      <div class="card-header bg-white">
+        <ul class="nav nav-tabs card-header-tabs" id="messageTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="customer-tab" data-bs-toggle="tab" 
+                    data-bs-target="#customer-messages" type="button" role="tab" 
+                    aria-controls="customer-messages" aria-selected="true">
+              <i class="bi bi-people-fill me-1"></i> Customer Messages
+              <span class="badge bg-primary ms-2"><%= messages.length %></span>
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="admin-tab" data-bs-toggle="tab" 
+                    data-bs-target="#admin-messages" type="button" role="tab" 
+                    aria-controls="admin-messages" aria-selected="false">
+              <i class="bi bi-shield-fill me-1"></i> Admin Messages
+              <span class="badge bg-success ms-2"><%= adminMessages.length %></span>
+            </button>
+          </li>
+        </ul>
+      </div>
+      <div class="tab-content" id="messageTabsContent">
+        
+        <!-- Customer Messages Tab -->
+        <div class="tab-pane fade show active" id="customer-messages" role="tabpanel" aria-labelledby="customer-tab">
+          <!-- Customer Filter Buttons -->
+          <div class="filter-buttons mb-4">
+            <button class="btn btn-outline-primary filter-btn active" data-filter="all">
+              <i class="bi bi-collection"></i> All Messages
+            </button>
+            <button class="btn btn-outline-primary filter-btn" data-filter="new">
+              <i class="bi bi-star-fill"></i> New Messages
+            </button>
+            <button class="btn btn-outline-primary filter-btn" data-filter="seen">
+              <i class="bi bi-eye-fill"></i> Seen Messages
+            </button>
+            <button class="btn btn-outline-primary filter-btn" data-filter="unreplied">
+              <i class="bi bi-exclamation-circle"></i> Needs Reply
+            </button>
+          </div>
+          
+          <!-- Customer Messages Content -->
+          <div id="customer-messages-container">
+            <% if (messages.length === 0) { %>
+              <div class="text-center py-5">
+                <i class="bi bi-envelope-open text-muted" style="font-size: 3rem;"></i>
+                <h5 class="mt-3">No customer messages</h5>
+                <p class="text-muted">When customers contact you, their messages will appear here</p>
+              </div>
+            <% } else { %>
+              <div class="row">
+                <% messages.forEach(msg => { 
+                  const isNew = (Date.now() - new Date(msg.createdAt)) < 86400000;
+                %>
+                  <div class="col-12 mb-3 message-item <%= isNew ? 'new-message' : 'seen-message' %>" 
+                       data-status="<%= isNew ? 'new' : 'seen' %>" 
+                       data-replied="<%= msg.reply ? 'replied' : 'unreplied' %>">
+                    <div class="card message-card customer-card">
+                      <% if (!msg.reply) { %>
+                        <span class="unreplied-badge badge bg-warning text-dark">
+                          <i class="bi bi-exclamation-circle me-1"></i>Needs Reply
+                        </span>
+                      <% } %>
+                      <div class="card-body">
+                        <div class="d-flex gap-3">
+                          <div class="flex-shrink-0">
+                            <img src="<%= msg.productImage || '/images/no-image.png' %>" 
+                                 class="product-thumb" 
+                                 alt="<%= msg.productName %>">
+                          </div>
+                          <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start">
+                              <div>
+                                <h5 class="mb-1"><%= msg.productName %></h5>
+                                <p class="text-muted small mb-2">From: <%= msg.customerName %></p>
+                              </div>
+                              <small class="message-time">
+                                <i class="bi bi-clock"></i> <%= new Date(msg.createdAt).toLocaleString() %>
+                                <% if (isNew) { %>
+                                  <span class="badge bg-success status-badge ms-2">NEW</span>
+                                <% } %>
+                              </small>
+                            </div>
+                            
+                            <div class="message-content mb-3">
+                              <%= msg.message %>
+                            </div>
+                            
+                            <% if (msg.reply) { %>
+                              <div class="alert alert-success p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                  <strong class="text-success">
+                                    <i class="bi bi-check-circle-fill me-1"></i>Your Reply
+                                  </strong>
+                                  <small class="message-time">
+                                    <%= new Date(msg.updatedAt).toLocaleString() %>
+                                  </small>
+                                </div>
+                                <p class="mb-0"><%= msg.reply %></p>
+                              </div>
+                            <% } else { %>
+                              <form method="POST" action="/seller/reply/<%= msg.id %>" class="reply-form">
+                                <div class="form-floating mb-3">
+                                  <textarea name="reply" class="form-control" placeholder="Write your reply..." 
+                                            id="reply-<%= msg.id %>" style="height: 100px" required></textarea>
+                                  <label for="reply-<%= msg.id %>">Type your response...</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                  <i class="bi bi-send-fill me-1"></i> Send Reply
+                                </button>
+                              </form>
+                            <% } %>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <% }); %>
+              </div>
+            <% } %>
+          </div>
+        </div>
+        
+        <!-- Admin Messages Tab -->
+        <div class="tab-pane fade" id="admin-messages" role="tabpanel" aria-labelledby="admin-tab">
+          <!-- Admin Filter Buttons -->
+          <div class="filter-buttons mb-4">
+            <button class="btn btn-outline-success filter-btn active" data-filter="all">
+              <i class="bi bi-collection"></i> All Messages
+            </button>
+            <button class="btn btn-outline-success filter-btn" data-filter="new">
+              <i class="bi bi-star-fill"></i> New Messages
+            </button>
+            <button class="btn btn-outline-success filter-btn" data-filter="seen">
+              <i class="bi bi-eye-fill"></i> Seen Messages
+            </button>
+            <button class="btn btn-outline-success filter-btn" data-filter="unreplied">
+              <i class="bi bi-exclamation-circle"></i> Needs Response
+            </button>
+          </div>
+          
+          <!-- Admin Messages Content -->
+          <div id="admin-messages-container">
+            <% if (adminMessages.length === 0) { %>
+              <div class="text-center py-5">
+                <i class="bi bi-shield-check text-muted" style="font-size: 3rem;"></i>
+                <h5 class="mt-3">No admin notifications</h5>
+                <p class="text-muted">Important updates from administrators will appear here</p>
+              </div>
+            <% } else { %>
+              <div class="row">
+                <% adminMessages.forEach(msg => { 
+                  const isNew = (Date.now() - new Date(msg.date)) < 86400000;
+                %>
+                  <div class="col-12 mb-3 message-item <%= isNew ? 'new-message' : 'seen-message' %>" 
+                       data-status="<%= isNew ? 'new' : 'seen' %>" 
+                       data-replied="<%= msg.reply ? 'replied' : 'unreplied' %>">
+                    <div class="card message-card admin-card">
+                      <% if (!msg.reply) { %>
+                        <span class="unreplied-badge badge bg-danger">
+                          <i class="bi bi-exclamation-triangle-fill me-1"></i>Response Needed
+                        </span>
+                      <% } %>
+                      <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                          <h5 class="mb-0">
+                            <i class="bi bi-megaphone-fill text-success me-2"></i>Admin Notification
+                          </h5>
+                          <small class="message-time">
+                            <i class="bi bi-clock"></i> <%= new Date(msg.date).toLocaleString() %>
+                            <% if (isNew) { %>
+                              <span class="badge bg-success status-badge ms-2">NEW</span>
+                            <% } %>
+                          </small>
+                        </div>
+                        
+                        <div class="message-content mb-3">
+                          <%= msg.text %>
+                        </div>
+                        
+                        <% if (msg.reply) { %>
+                          <div class="alert alert-success p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                              <strong class="text-success">
+                                <i class="bi bi-check-circle-fill me-1"></i>Your Response
+                              </strong>
+                              <small class="message-time">
+                                <%= new Date(msg.repliedAt).toLocaleString() %>
+                              </small>
+                            </div>
+                            <p class="mb-0"><%= msg.reply %></p>
+                          </div>
+                        <% } else { %>
+                          <form method="POST" action="/seller/admin-reply/<%= msg.id %>" class="reply-form">
+                            <div class="form-floating mb-3">
+                              <textarea name="reply" class="form-control" placeholder="Your reply to admin..." 
+                                        id="admin-reply-<%= msg.id %>" style="height: 100px" required></textarea>
+                              <label for="admin-reply-<%= msg.id %>">Type your response to admin...</label>
+                            </div>
+                            <button type="submit" class="btn btn-success btn-sm">
+                              <i class="bi bi-send-fill me-1"></i> Send Response
+                            </button>
+                          </form>
+                        <% } %>
+                      </div>
+                    </div>
+                  </div>
+                <% }); %>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize Bootstrap tabs
+      const messageTabs = new bootstrap.Tab(document.getElementById('customer-tab'));
+      
+      // Filter functionality for both tabs
+      document.querySelectorAll('.filter-buttons').forEach(filterGroup => {
+        filterGroup.addEventListener('click', function(e) {
+          if (e.target.classList.contains('filter-btn')) {
+            // Update active button
+            filterGroup.querySelectorAll('.filter-btn').forEach(btn => {
+              btn.classList.remove('active');
+            });
+            e.target.classList.add('active');
+            
+            // Get the container based on which tab we're in
+            const tabPane = e.target.closest('.tab-pane');
+            const filter = e.target.dataset.filter;
+            
+            // Filter messages
+            tabPane.querySelectorAll('.message-item').forEach(item => {
+              const isNew = item.dataset.status === 'new';
+              const isReplied = item.dataset.replied === 'replied';
+              
+              let shouldShow = true;
+              
+              switch(filter) {
+                case 'new':
+                  shouldShow = isNew;
+                  break;
+                case 'seen':
+                  shouldShow = !isNew;
+                  break;
+                case 'unreplied':
+                  shouldShow = !isReplied;
+                  break;
+                // case 'all' falls through to default
+                default:
+                  shouldShow = true;
+              }
+              
+              item.style.display = shouldShow ? 'block' : 'none';
+            });
+          }
+        });
+      });
+      
+      // Auto-remove messages older than 24 hours (frontend fallback)
+      const now = new Date();
+      
+      document.querySelectorAll('.message-time').forEach(el => {
+        const timeText = el.textContent.match(/[0-9].+/)[0];
+        const messageDate = new Date(timeText);
+        const hoursDiff = (now - messageDate) / (1000 * 60 * 60);
+        
+        if (hoursDiff > 24) {
+          el.closest('.message-item').remove();
+        }
+      });
+      
+      // Update counts after potential removal
+      const updateCounts = () => {
+        const customerCount = document.querySelectorAll('#customer-messages .message-item').length;
+        const adminCount = document.querySelectorAll('#admin-messages .message-item').length;
+        
+        document.querySelectorAll('#customer-tab .badge').forEach(b => {
+          b.textContent = customerCount;
+        });
+        
+        document.querySelectorAll('#admin-tab .badge').forEach(b => {
+          b.textContent = adminCount;
+        });
+      };
+      
+      updateCounts();
+    });
+  </script>
+</body>
+</html>

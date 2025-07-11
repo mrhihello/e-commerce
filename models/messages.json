@@ -1,0 +1,114 @@
+[
+  {
+    "id": "1752064700993",
+    "sellerId": "1751809570158",
+    "text": "gfdgfds",
+    "fromAdmin": true,
+    "seen": true,
+    "timestamp": "2025-07-09T12:38:20.993Z",
+    "reply": "tfuyjtyj"
+  },
+  {
+    "id": "1752064707977",
+    "sellerId": "1751809570158",
+    "text": "hi",
+    "fromAdmin": true,
+    "seen": true,
+    "timestamp": "2025-07-09T12:38:27.977Z",
+    "reply": "yjyj"
+  },
+  {
+    "id": "1752065495901",
+    "sellerId": "1751809570158",
+    "text": "khfgbsdfksgfkgh",
+    "fromAdmin": true,
+    "seen": true,
+    "timestamp": "2025-07-09T12:51:35.901Z",
+    "reply": "jfyjy"
+  },
+  {
+    "id": "1752065869317",
+    "sellerId": "1751809570158",
+    "text": "hi hello",
+    "fromAdmin": true,
+    "seen": true,
+    "timestamp": "2025-07-09T12:57:49.317Z",
+    "reply": "yjtjf"
+  },
+  {
+    "id": "1752067289272",
+    "sellerId": "1751809570158",
+    "text": "my name is sher ali",
+    "fromAdmin": true,
+    "seen": true,
+    "timestamp": "2025-07-09T13:21:29.272Z",
+    "reply": "htrhjrt"
+  },
+  {
+    "id": "1752067358352",
+    "sellerId": "1751809570158",
+    "text": "hi my name is sherali",
+    "fromAdmin": true,
+    "seen": true,
+    "timestamp": "2025-07-09T13:22:38.352Z",
+    "reply": "thrth"
+  },
+  {
+    "id": "1752067464436",
+    "sellerId": "1751809570158",
+    "text": "hi hello",
+    "fromAdmin": true,
+    "seen": true,
+    "timestamp": "2025-07-09T13:24:24.436Z",
+    "reply": "rthtrh"
+  },
+  {
+    "id": "1752067475683",
+    "sellerId": "1751809570158",
+    "text": "my name is sher ali",
+    "fromAdmin": true,
+    "seen": true,
+    "timestamp": "2025-07-09T13:24:35.683Z",
+    "reply": "rhrth"
+  },
+  {
+    "id": "14673ee8-8a8a-4a7c-bdc0-02e30fef7c32",
+    "sellerId": "1751809570158",
+    "productId": "1751990942831",
+    "from": "sher ali",
+    "fromEmail": "ali@gmail.com",
+    "message": "hi i need that product",
+    "reply": "ok",
+    "createdAt": "2025-07-09T15:02:33.793Z"
+  },
+  {
+    "id": "4c16d4ae-2231-4c02-bea4-8cc393e3483d",
+    "sellerId": "1751809570158",
+    "productId": "1751990942831",
+    "from": "sher ali",
+    "fromEmail": "ali@gmail.com",
+    "message": "hi is it available",
+    "reply": "yes",
+    "createdAt": "2025-07-09T21:35:24.401Z"
+  },
+  {
+    "id": "57f79bac-e634-4148-8097-1bc3255e9f1c",
+    "sellerId": "1751809570158",
+    "productId": "1752097667490",
+    "from": "sher ali",
+    "fromEmail": "ali@gmail.com",
+    "message": "hi is it available",
+    "reply": "yes",
+    "createdAt": "2025-07-09T21:49:22.956Z"
+  },
+  {
+    "id": "0132737f-bde1-4b37-947d-d5f496efff3e",
+    "sellerId": "1751809570158",
+    "productId": "1752140653153",
+    "from": "sher ali",
+    "fromEmail": "ali@gmail.com",
+    "message": "hi hello is it availvbeol",
+    "reply": "hi ye vailbeler\\",
+    "createdAt": "2025-07-10T09:48:41.401Z"
+  }
+]
