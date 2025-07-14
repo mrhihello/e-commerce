@@ -1,878 +1,358 @@
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-              <title><%= product.name %> - Product Detail</title>
-              <link rel="stylesheet" href="/css/style.css">
-              <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-              <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>
-                :root {
-                  --primary: #4CAF50;
-                  --primary-dark: #3e8e41;
-                  --secondary: #EF4444;
-                  --dark: #333;
-                  --light: #f8f9fa;
-                  --gray: #6c757d;
-                  --border: #e9ecef;
-                  --shadow: 0 5px 15px rgba(0,0,0,0.08);
-                }
-
-                body {
-                  font-family: 'Poppins', sans-serif;
-                  background-color: #f5f5f5;
-                  color: var(--dark);
-                  line-height: 1.6;
-                }
-
-                .container {
-                  max-width: 1200px;
-                  margin: 0 auto;
-                  padding: 20px;
-                }
-
-                /* Navigation Button */
-                .back-to-home {
-                  display: inline-flex;
-                  align-items: center;
-                  gap: 8px;
-                  padding: 10px 20px;
-                  margin: 20px 0;
-                  background: white;
-                  color: var(--dark);
-                  border: 1px solid var(--border);
-                  border-radius: 6px;
-                  text-decoration: none;
-                  transition: all 0.3s;
-                  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-                }
-
-                .back-to-home:hover {
-                  background: #f8f9fa;
-                  transform: translateY(-2px);
-                  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-                }
-
-                .product-container {
-                  display: grid;
-                  grid-template-columns: 1fr 1fr;
-                  gap: 30px;
-                  background: #fff;
-                  border-radius: 12px;
-                  box-shadow: var(--shadow);
-                  padding: 30px;
-                  margin: 20px 0 30px;
-                }
-
-                /* Product Gallery Styles */
-                .product-gallery {
-                  position: relative;
-                }
-
-                #mainProductImage {
-                  width: 100%;
-                  height: 390px;
-                  object-fit: contain;
-                  border-radius: 8px;
-                  border: 1px solid var(--border);
-                  background: #fff;
-                  margin-bottom: 15px;
-                  cursor: zoom-in;
-                  transition: transform 0.3s;
-                }
-
-                #mainProductImage:hover {
-                  transform: scale(1.02);
-                }
-
-                .thumbnail-container {
-                  display: flex;
-                  gap: 10px;
-                  flex-wrap: wrap;
-                }
-
-                .thumb-image {
-                  width: 70px;
-                  height: 70px;
-                  object-fit: cover;
-                  cursor: pointer;
-                  border-radius: 6px;
-                  border: 2px solid var(--border);
-                  transition: all 0.3s;
-                }
-
-                .thumb-image:hover {
-                  border-color: var(--primary);
-                  transform: translateY(-3px);
-                }
-
-                .thumb-image.active {
-                  border-color: var(--primary);
-                  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3);
-                }
-
-                /* Product Info Styles */
-                .product-info {
-                  display: flex;
-                  flex-direction: column;
-                }
-
-                .product-header {
-                  border-bottom: 1px solid var(--border);
-                  padding-bottom: 15px;
-                  margin-bottom: 20px;
-                }
-
-                .product-title {
-                  font-size: 28px;
-                  font-weight: 600;
-                  margin: 0 0 10px;
-                  color: var(--dark);
-                }
-
-                .product-meta {
-                  display: flex;
-                  align-items: center;
-                  gap: 15px;
-                  margin-bottom: 15px;
-                }
-
-                .product-rating {
-                  color: #ffc107;
-                  font-size: 14px;
-                }
-
-                .product-sku {
-                  color: var(--gray);
-                  font-size: 14px;
-                }
-
-                .product-price {
-                  font-size: 28px;
-                  font-weight: 700;
-                  color: var(--primary);
-                  margin: 15px 0;
-                }
-
-                .product-availability {
-                  display: inline-block;
-                  padding: 5px 10px;
-                  border-radius: 20px;
-                  font-size: 14px;
-                  font-weight: 500;
-                  margin-bottom: 20px;
-                }
-
-                .in-stock {
-                  background-color: #e6f7e6;
-                  color: var(--primary);
-                }
-
-                .out-of-stock {
-                  background-color: #ffe6e6;
-                  color: var(--secondary);
-                }
-
-                .product-description {
-                  margin: 20px 0;
-                  color: #555;
-                }
-
-                .product-actions {
-                  margin-top: auto;
-                }
-
-                .quantity-selector {
-                  display: flex;
-                  align-items: center;
-                  margin-bottom: 20px;
-                }
-
-                .quantity-selector label {
-                  margin-right: 10px;
-                  font-weight: 500;
-                }
-
-                .quantity-input {
-                  width: 80px;
-                  padding: 8px 12px;
-                  border: 1px solid var(--border);
-                  border-radius: 6px;
-                  text-align: center;
-                  font-size: 16px;
-                }
-
-                /* Button Styles */
-                .btn {
-                  display: inline-flex;
-                  align-items: center;
-                  justify-content: center;
-                  padding: 12px 24px;
-                  border-radius: 6px;
-                  font-size: 16px;
-                  font-weight: 500;
-                  cursor: pointer;
-                  transition: all 0.3s;
-                  border: none;
-                  text-decoration: none;
-                }
-
-                .btn-primary {
-                  background: var(--primary);
-                  color: white;
-                }
-
-                .btn-primary:hover {
-                  background: var(--primary-dark);
-                  transform: translateY(-2px);
-                  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-                }
-
-                .btn-secondary {
-                  background: var(--secondary);
-                  color: white;
-                  margin-left: 10px;
-                }
-
-                .btn-secondary:hover {
-                  background: #dc2626;
-                  transform: translateY(-2px);
-                  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-                }
-
-                .btn-disabled {
-                  background: #ccc;
-                  color: #666;
-                  cursor: not-allowed;
-                }
-
-                .btn-disabled:hover {
-                  transform: none;
-                  box-shadow: none;
-                }
-
-                .action-buttons {
-                  display: flex;
-                  gap: 10px;
-                  flex-wrap: wrap;
-                }
-
-                /* Section Titles */
-                .section-title {
-                  font-size: 22px;
-                  font-weight: 600;
-                  margin: 30px 0 20px;
-                  position: relative;
-                  padding-bottom: 10px;
-                }
-
-                .section-title::after {
-                  content: '';
-                  position: absolute;
-                  bottom: 0;
-                  left: 0;
-                  width: 60px;
-                  height: 3px;
-                  background: var(--primary);
-                }
-
-                /* Q&A Section */
-                .qa-section {
-                  background: #fff;
-                  border-radius: 12px;
-                  box-shadow: var(--shadow);
-                  padding: 30px;
-                  margin-bottom: 30px;
-                }
-
-                .ask-form {
-                  margin-top: 20px;
-                }
-
-                .form-group {
-                  margin-bottom: 15px;
-                }
-
-                .form-control {
-                  width: 100%;
-                  padding: 12px;
-                  border: 1px solid var(--border);
-                  border-radius: 6px;
-                  font-family: inherit;
-                  transition: border-color 0.3s;
-                }
-
-                .form-control:focus {
-                  outline: none;
-                  border-color: var(--primary);
-                  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
-                }
-
-                textarea.form-control {
-                  min-height: 120px;
-                  resize: vertical;
-                }
-
-                .messages-list {
-                  margin-top: 30px;
-                }
-
-                .message-card {
-                  border: 1px solid var(--border);
-                  border-radius: 8px;
-                  padding: 15px;
-                  margin-bottom: 15px;
-                  background: #f8f9fa;
-                }
-
-                .message-header {
-                  display: flex;
-                  justify-content: space-between;
-                  margin-bottom: 10px;
-                  font-weight: 500;
-                }
-
-                .message-reply {
-                  margin-top: 15px;
-                  padding-top: 15px;
-                  border-top: 1px dashed var(--border);
-                }
-
-                .reply-badge {
-                  display: inline-block;
-                  background: var(--primary);
-                  color: white;
-                  padding: 2px 8px;
-                  border-radius: 4px;
-                  font-size: 12px;
-                  margin-left: 10px;
-                }
-
-                /* Enhanced Related Products Section */
-               .related-products {
-                  margin: 50px 0;
-                }
-
-                .section-header {
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                  margin-bottom: 20px;
-                }
-
-                .view-all {
-                  color: var(--primary);
-                  text-decoration: none;
-                  font-weight: 500;
-                  transition: color 0.3s;
-                }
-
-                .view-all:hover {
-                  color: var(--primary-dark);
-                  text-decoration: underline;
-                }
-
-                .product-grid {
-                  display: grid;
-                  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-                  gap: 25px;
-                  margin-top: 20px;
-                }
-
-                .product-card {
-                  background: #fff;
-                  border-radius: 12px;
-                  overflow: hidden;
-                  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-                  transition: all 0.3s ease;
-                  position: relative;
-                  display: flex;
-                  flex-direction: column;
-                }
-
-                .product-card:hover {
-                  transform: translateY(-8px);
-                  box-shadow: 0 15px 30px rgba(0,0,0,0.12);
-                }
-
-                .product-card-badge {
-                  position: absolute;
-                  top: 10px;
-                  right: 10px;
-                  background: var(--secondary);
-                  color: white;
-                  padding: 4px 8px;
-                  border-radius: 4px;
-                  font-size: 12px;
-                  font-weight: 500;
-                  z-index: 1;
-                }
-
-                .product-card-img-container {
-                  position: relative;
-                  overflow: hidden;
-                  height: 200px;
-                  background: #f8f9fa;
-                  flex-shrink: 0;
-                }
-
-                .product-card-img {
-                  width: 100%;
-                  height: 100%;
-                  object-fit: contain;
-                  transition: transform 0.5s ease;
-                }
-
-                .product-card:hover .product-card-img {
-                  transform: scale(1.05);
-                }
-
-                .product-card-body {
-                  padding: 18px;
-                  flex-grow: 1;
-                  display: flex;
-                  flex-direction: column;
-                }
-
-                .product-card-title {
-                  font-size: 16px;
-                  font-weight: 500;
-                  margin: 0 0 8px;
-                  display: -webkit-box;
-                  -webkit-line-clamp: 2;
-                  -webkit-box-orient: vertical;
-                  overflow: hidden;
-                  height: 40px;
-                }
-
-                .product-card-price {
-                  color: var(--primary);
-                  font-weight: 600;
-                  font-size: 18px;
-                  margin-bottom: 12px;
-                }
-
-                .product-card-rating {
-                  color: #ffc107;
-                  font-size: 14px;
-                  margin-bottom: 15px;
-                }
-
-                .product-card-actions {
-                  display: flex;
-                  justify-content: space-between;
-                  gap: 8px;
-                  margin-top: auto;
-                }
-
-                .product-card-btn {
-                  flex: 1;
-                  padding: 8px 12px;
-                  font-size: 14px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  gap: 5px;
-                }
-
-            /* Updated Mobile-Specific Styles */
-            @media (max-width: 768px) {
-              .product-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-              }
-
-              .product-card {
-                margin-bottom: 0;
-                min-height: auto;
-              }
-
-              .product-card-img-container {
-                height: 140px;
-              }
-
-              .product-card-body {
-                padding: 10px;
-                flex-grow: 1;
-                display: flex;
-                flex-direction: column;
-              }
-
-              .product-card-title {
-                font-size: 13px;
-                -webkit-line-clamp: 2;
-                height: 36px;
-                margin-bottom: 6px;
-                line-height: 1.3;
-                display: -webkit-box;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              }
-
-              .product-card-price {
-                font-size: 15px;
-                margin: 6px 0;
-              }
-
-              .product-card-rating {
-                display: none; /* Hide rating on mobile to save space */
-              }
-
-              .product-card-actions {
-                margin-top: auto;
-                flex-direction: row;
-                gap: 6px;
-              }
-
-              .product-card-btn {
-                padding: 6px 8px;
-                font-size: 12px;
-                min-height: 32px;
-              }
-
-              .product-card-btn i {
-                font-size: 12px;
-              }
-
-              /* Make the heart button icon-only on mobile */
-              .product-card-actions .btn-secondary {
-                padding: 6px;
-                min-width: 32px;
-              }
-
-              .product-card-actions .btn-secondary span {
-                display: none;
-              }
-
-              .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-              }
-
-              .section-title {
-                font-size: 18px;
-                margin: 20px 0 12px;
-              }
-            }
-
-            /* Extra small devices (phones, 480px and down) */
-            @media (max-width: 480px) {
-              .product-grid {
-                gap: 8px;
-              }
-
-              .product-card-img-container {
-                height: 120px;
-              }
-
-              .product-card-title {
-                font-size: 12px;
-                height: 32px;
-              }
-
-              .product-card-price {
-                font-size: 14px;
-              }
-
-              .product-card-actions {
-                gap: 4px;
-              }
-
-              .product-card-btn {
-                font-size: 11px;
-                padding: 4px 6px;
-              }
-
-              /* Further compact the product info section */
-              .product-container {
-                padding: 20px 15px;
-              }
-
-              .product-title {
-                font-size: 22px;
-              }
-
-              .product-price {
-                font-size: 24px;
-                margin: 10px 0;
-              }
-
-              .product-description {
-                margin: 15px 0;
-              }
-            }
-
-                /* Previous responsive styles remain the same */
-                @media (max-width: 768px) {
-                  .product-container {
-                    grid-template-columns: 1fr;
-                  }
-
-                  .action-buttons {
-                    flex-direction: column;
-                  }
-
-                  .btn-secondary {
-                    margin-left: 0;
-                    margin-top: 10px;
-                  }
-                }
-              </style>
-            </head>
-            <body>
-              <div class="container">
-                <a href="/" class="back-to-home">
-                  <i class="fas fa-arrow-left"></i> Back to Home
-                </a>
-
-                <% if (!product) { %>
-                  <div class="alert alert-danger" style="padding: 20px; background: #ffe6e6; border-radius: 8px;">
-                    <h2>Product not found</h2>
-                    <p>The product you're looking for doesn't exist or has been removed.</p>
-                  </div>
-                <% } else { %>
-                  <div class="product-container">
-                    <!-- Product Gallery Section -->
-                    <div class="product-gallery">
-                      <img id="mainProductImage" 
-                           src="<%= product.images?.[0] || '/images/no-image.png' %>" 
-                           alt="<%= product.name %>"
-                           class="img-responsive">
-
-                      <div class="thumbnail-container">
-                        <% if (product.images && product.images.length > 0) { %>
-                          <% product.images.forEach((img, index) => { %>
-                            <img 
-                              src="<%= img %>" 
-                              alt="Product Image <%= index + 1 %>" 
-                              class="thumb-image <%= index === 0 ? 'active' : '' %>"
-                              onclick="switchImage(this, '<%= img %>')">
-                          <% }) %>
-                        <% } else { %>
-                          <img 
-                            src="/images/no-image.png" 
-                            alt="No image available" 
-                            class="thumb-image active"
-                            onclick="switchImage(this, '/images/no-image.png')">
-                        <% } %>
-                      </div>
-                    </div>
-
-                    <!-- Product Info Section -->
-                    <div class="product-info">
-                      <div class="product-header">
-                        <h1 class="product-title"><%= product.name %></h1>
-                        <div class="product-meta">
-                          <div class="product-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
-                            <span>(24 reviews)</span>
-                          </div>
-                          <div class="product-sku">SKU: <%= product.id %></div>
-                        </div>
-                      </div>
-
-                      <div class="product-price">$<%= product.price.toFixed(2) %></div>
-
-                      <div class="product-availability <%= (product.quantity || 0) > 0 ? 'in-stock' : 'out-of-stock' %>">
-                        <% if ((product.quantity || 0) > 0) { %>
-                          <i class="fas fa-check-circle"></i> In Stock (<%= product.quantity %> available)
-                        <% } else { %>
-                          <i class="fas fa-times-circle"></i> Out of Stock
-                        <% } %>
-                      </div>
-
-                      <div class="product-description">
-                        <h3>Description</h3>
-                        <p><%= product.description %></p>
-                      </div>
-
-                      <div class="product-actions">
-                        <% if ((product.quantity || 0) > 0) { %>
-                          <form method="POST" action="/add-to-cart/<%= product.id %>">
-                            <div class="quantity-selector">
-                              <label for="qty"><strong>Quantity:</strong></label>
-                              <input type="number" 
-                                     id="qty" 
-                                     name="qty" 
-                                     min="1" 
-                                     max="<%= product.quantity %>" 
-                                     value="1" 
-                                     class="quantity-input"
-                                     required>
-                            </div>
-
-                            <div class="action-buttons">
-                              <button class="btn btn-primary" type="submit">
-                                <i class="fas fa-shopping-cart"></i> Add to Cart
-                              </button>
-                              <button class="btn btn-secondary" type="button" onclick='addToFavorites(<%- JSON.stringify(product) %>)'>
-                                <i class="fas fa-heart"></i> Add to Wishlist
-                              </button>
-                            </div>
-                          </form>
-                        <% } else { %>
-                          <button class="btn btn-disabled" disabled>
-                            <i class="fas fa-bell"></i> Notify When Available
-                          </button>
-                        <% } %>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Customer Questions Section -->
-                  <div class="qa-section">
-                    <h2 class="section-title">Customer Questions</h2>
-
-                    <% if (user) { %>
-                      <div class="ask-form">
-                        <form method="POST" action="/customer/message">
-                          <input type="hidden" name="productId" value="<%= product.id %>">
-                          <input type="hidden" name="sellerId" value="<%= product.sellerId %>">
-
-                          <div class="form-group">
-                            <label for="message"><strong>Ask a question about this product:</strong></label>
-                            <textarea id="message" name="message" class="form-control" placeholder="Type your question here..." required></textarea>
-                          </div>
-
-                          <button class="btn btn-primary" type="submit">
-                            <i class="fas fa-paper-plane"></i> Send Question
-                          </button>
-                        </form>
-                      </div>
-                    <% } else { %>
-                      <div class="login-prompt">
-                        <p>You need to be logged in to ask questions.</p>
-                        <a href="/auth/customer/login" class="btn btn-primary">
-                          <i class="fas fa-sign-in-alt"></i> Login Now
+                  <!DOCTYPE html>
+                  <html lang="en">
+                  <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Your Orders - Seller Dashboard</title>
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+                    <style>
+                      :root {
+                        --primary-color: #4361ee;
+                        --secondary-color: #3f37c9;
+                        --success-color: #4cc9f0;
+                        --danger-color: #dc3545;
+                      }
+
+                      body {
+                        background-color: #f8f9fa;
+                      }
+
+                      .orders-card {
+                        border-radius: 12px;
+                        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+                        border: none;
+                        overflow: hidden;
+                      }
+
+                      .card-header {
+                        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+                        color: white;
+                      }
+
+                      .status-badge {
+                        font-size: 0.75rem;
+                        padding: 0.35em 0.65em;
+                        border-radius: 50px;
+                      }
+
+                      .badge-pending {
+                        background-color: #ffc107;
+                        color: #212529;
+                      }
+
+                      .badge-processing {
+                        background-color: #0d6efd;
+                        color: white;
+                      }
+
+                      .badge-shipped {
+                        background-color: #fd7e14;
+                        color: white;
+                      }
+
+                      .badge-delivered {
+                        background-color: #198754;
+                        color: white;
+                      }
+
+                      .order-row {
+                        transition: all 0.3s;
+                        border-left: 4px solid transparent;
+                      }
+
+                      .order-row:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                        border-left-color: var(--success-color);
+                      }
+
+                      .customer-info {
+                        font-size: 0.9rem;
+                      }
+
+                      .order-date {
+                        font-size: 0.8rem;
+                        color: #6c757d;
+                      }
+
+                      .action-btn {
+                        padding: 0.375rem 0.75rem;
+                        font-size: 0.85rem;
+                      }
+
+                      .empty-state {
+                        padding: 3rem;
+                        text-align: center;
+                      }
+
+                      .empty-state-icon {
+                        font-size: 3rem;
+                        color: #adb5bd;
+                        margin-bottom: 1rem;
+                      }
+
+                      .table-responsive {
+                        overflow-x: auto;
+                      }
+
+                      @media (max-width: 768px) {
+                        .table-responsive {
+                          display: block;
+                          width: 100%;
+                          overflow-x: auto;
+                          -webkit-overflow-scrolling: touch;
+                        }
+                      }
+                    </style>
+                  </head>
+                  <body>
+                    <div class="container py-4">
+                      <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1 class="h4 mb-0">
+                          <i class="bi bi-cart-check me-2"></i>Customer Orders
+                        </h1>
+                        <a href="/seller/dashboard" class="btn btn-outline-secondary">
+                          <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
                         </a>
                       </div>
-                    <% } %>
 
-                    <% if (messages && messages.length > 0) { %>
-                      <div class="messages-list">
-                        <h3>Your Previous Questions</h3>
+                      <% if (error) { %>
+                        <div class="alert alert-danger m-3">
+                          <i class="bi bi-exclamation-triangle-fill me-2"></i><%= error %>
+                        </div>
+                      <% } %>
 
-                        <% messages.forEach(msg => { %>
-                          <div class="message-card">
-                            <div class="message-header">
-                              <span>Your question on <%= new Date(msg.createdAt).toLocaleDateString() %></span>
-                              <% if (msg.reply) { %>
-                                <span class="reply-badge">Answered</span>
-                              <% } %>
+                      <div class="card orders-card">
+                        <div class="card-header">
+                          <h2 class="h5 mb-0">Order Management</h2>
+                        </div>
+
+                        <div class="card-body">
+                          <% if (orders.length === 0) { %>
+                            <div class="empty-state">
+                              <i class="bi bi-cart-x empty-state-icon"></i>
+                              <h3 class="h5">No Orders Yet</h3>
+                              <p class="text-muted">When customers purchase your products, their orders will appear here.</p>
                             </div>
-                            <p><%= msg.message %></p>
+                          <% } else { %>
+                            <div class="table-responsive">
+                              <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                  <tr>
+                                    <th>Product</th>
+                                    <th>Qty</th>
+                                    <th>Customer</th>
+                                    <th>Status</th>
+                                    <th>Total</th>
+                                    <th>Actions</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <% orders.forEach(order => { %>
+                                    <tr class="order-row">
+                                      <td>
+                                        <div class="d-flex align-items-center">
+                                          <img src="<%= order.productImage || '/images/default-product.png' %>" 
+                                               alt="<%= order.productName || 'Product' %>" 
+                                               class="rounded me-2" width="40" height="40">
+                                          <div>
+                                            <strong><%= order.productName || 'Product' %></strong>
+                                            <div class="order-date">
+                                              <%= new Date(order.createdAt).toLocaleString() %>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </td>
+                                      <td><%= order.quantity || 1 %></td>
+                                      <td>
+                                        <div class="customer-info">
+                                          <div><%= order.customerName || 'Customer' %></div>
+                                          <small class="text-muted"><%= order.customerPhone || 'No phone' %></small>
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <form action="/seller/orders/<%= order.id %>/status" method="POST" class="d-inline">
+                                          <select name="status" class="form-select form-select-sm" 
+                                                  onchange="this.form.submit()" style="width: auto;">
+                                            <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>
+                                              Pending
+                                            </option>
+                                            <option value="processing" <%= order.status === 'processing' ? 'selected' : '' %>>
+                                              Processing
+                                            </option>
+                                            <option value="shipped" <%= order.status === 'shipped' ? 'selected' : '' %>>
+                                              Shipped
+                                            </option>
+                                            <option value="delivered" <%= order.status === 'delivered' ? 'selected' : '' %>>
+                                              Delivered
+                                            </option>
+                                          </select>
+                                        </form>
+                                        <div class="mt-1">
+                                          <span class="status-badge badge-<%= order.status %>">
+                                            <i class="bi <%= 
+                                              order.status === 'pending' ? 'bi-hourglass' : 
+                                              order.status === 'processing' ? 'bi-gear' :
+                                              order.status === 'shipped' ? 'bi-truck' :
+                                              'bi-check-circle' %> me-1"></i>
+                                            <%= order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : 'Unknown' %>
+                                          </span>
+                                        </div>
+                                      </td>
+                                      <td>
+                                        $<%= ((order.price || 0) * (order.quantity || 1)).toFixed(2) %>
+                                      </td>
+                                      <td>
+                                        <div class="d-flex gap-2">
+                                          <a href="/seller/invoice/<%= order.id %>" 
+                                             class="btn btn-sm btn-outline-primary action-btn">
+                                            <i class="bi bi-receipt"></i> Invoice
+                                          </a>
+                                          <button class="btn btn-sm btn-outline-secondary action-btn" 
+                                                  data-bs-toggle="modal" data-bs-target="#orderDetails<%= order.id %>">
+                                            <i class="bi bi-info-circle"></i> Details
+                                          </button>
+                                          <button class="btn btn-sm btn-outline-danger action-btn" 
+                                                  data-bs-toggle="modal" data-bs-target="#deleteOrder<%= order.id %>">
+                                            <i class="bi bi-trash"></i> Delete
+                                          </button>
+                                        </div>
+                                      </td>
+                                    </tr>
 
-                            <% if (msg.reply) { %>
-                              <div class="message-reply">
-                                <div class="message-header">
-                                  <span>Seller's reply on <%= new Date(msg.updatedAt).toLocaleDateString() %></span>
-                                </div>
-                                <p><%= msg.reply %></p>
-                              </div>
-                            <% } else { %>
-                              <p><em><i class="fas fa-clock"></i> Waiting for seller's response...</em></p>
-                            <% } %>
-                          </div>
-                        <% }); %>
-                      </div>
-                    <% } %>
-                  </div>
+                                    <!-- Order Details Modal -->
+                                    <div class="modal fade" id="orderDetails<%= order.id %>" tabindex="-1" 
+                                         aria-labelledby="orderDetailsLabel" aria-hidden="true">
+                                      <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="orderDetailsLabel">
+                                              Order #<%= order.id ? order.id.slice(0, 8) : '' %>
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                            <div class="row mb-3">
+                                              <div class="col-md-6">
+                                                <h6 class="fw-bold">Product Details</h6>
+                                                <div class="d-flex align-items-center mb-2">
+                                                  <img src="<%= order.productImage || '/images/default-product.png' %>" 
+                                                       alt="<%= order.productName || 'Product' %>" 
+                                                       class="rounded me-2" width="60" height="60">
+                                                  <div>
+                                                    <div><%= order.productName || 'Product' %></div>
+                                                    <div class="text-muted small">$<%= (order.price || 0).toFixed(2) %> x <%= order.quantity || 1 %></div>
+                                                  </div>
+                                                </div>
+                                                <div class="fw-bold">Total: $<%= ((order.price || 0) * (order.quantity || 1)).toFixed(2) %></div>
+                                              </div>
+                                              <div class="col-md-6">
+                                                <h6 class="fw-bold">Order Status</h6>
+                                                <form action="/seller/orders/<%= order.id %>/status" method="POST" class="mb-3">
+                                                  <select name="status" class="form-select mb-2">
+                                                    <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                                                    <option value="processing" <%= order.status === 'processing' ? 'selected' : '' %>>Processing</option>
+                                                    <option value="shipped" <%= order.status === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                                                    <option value="delivered" <%= order.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                                                  </select>
+                                                  <button type="submit" class="btn btn-sm btn-primary w-100">
+                                                    Update Status
+                                                  </button>
+                                                </form>
+                                              </div>
+                                            </div>
 
-                  <!-- Enhanced Related Products Section -->
-                  <% if (related && related.length > 0) { %>
-                    <div class="related-products">
-                      <div class="section-header">
-                        <h2 class="section-title">You May Also Like</h2>
-                        <a href="/" class="view-all">View All Products</a>
-                      </div>
+                                            <div class="row">
+                                              <div class="col-md-6">
+                                                <h6 class="fw-bold">Customer Information</h6>
+                                                <ul class="list-unstyled">
+                                                  <li><strong>Name:</strong> <%= order.customerName || 'N/A' %></li>
+                                                  <li><strong>Phone:</strong> <%= order.customerPhone || 'N/A' %></li>
+                                                  <li><strong>Email:</strong> <%= order.customerEmail || 'N/A' %></li>
+                                                </ul>
+                                              </div>
+                                              <div class="col-md-6">
+                                                <h6 class="fw-bold">Shipping Details</h6>
+                                                <ul class="list-unstyled">
+                                                  <li><strong>Address:</strong> <%= order.customerAddress || 'N/A' %></li>
+                                                  <li><strong>Location:</strong> <%= order.customerLocation || 'N/A' %></li>
+                                                  <li><strong>Payment:</strong> <%= order.paymentMethod || 'N/A' %></li>
+                                                </ul>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <a href="/seller/invoice/<%= order.id %>" class="btn btn-primary">
+                                              <i class="bi bi-receipt me-1"></i> View Invoice
+                                            </a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
 
-                      <div class="product-grid">
-                        <% related.forEach(p => { %>
-                          <div class="product-card">
-                            <% if (p.isNew) { %>
-                              <span class="product-card-badge">New</span>
-                            <% } %>
-                            <a href="/product/<%= p.id %>">
-                              <div class="product-card-img-container">
-                                <img src="<%= p.images?.[0] || '/images/default.jpg' %>" 
-                                     alt="<%= p.name %>" 
-                                     class="product-card-img">
-                              </div>
-                            </a>
-                            <div class="product-card-body">
-                              <a href="/product/<%= p.id %>">
-                                <h3 class="product-card-title"><%= p.name %></h3>
-                              </a>
-                              <div class="product-card-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                                <span>(<%= Math.floor(Math.random() * 50) + 1 %>)</span>
-                              </div>
-                              <div class="product-card-price">$<%= p.price.toFixed(2) %></div>
-                              <div class="product-card-actions">
-                                <a href="/product/<%= p.id %>" class="btn btn-primary product-card-btn">
-                                  <i class="fas fa-eye"></i> View
-                                </a>
-                                <button class="btn btn-secondary product-card-btn" 
-                                        onclick='addToFavorites(<%- JSON.stringify(p) %>)'>
-                                  <i class="fas fa-heart"></i>
-                                </button>
-                              </div>
+                                    <!-- Delete Order Confirmation Modal -->
+                                    <div class="modal fade" id="deleteOrder<%= order.id %>" tabindex="-1" 
+                                         aria-labelledby="deleteOrderLabel" aria-hidden="true">
+                                      <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                          <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title" id="deleteOrderLabel">
+                                              <i class="bi bi-exclamation-triangle me-2"></i>Confirm Deletion
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                            <p>Are you sure you want to delete this order?</p>
+                                            <div class="alert alert-warning">
+                                              <strong>Warning:</strong> This action cannot be undone. All order data will be permanently removed.
+                                            </div>
+                                            <div class="card mb-3">
+                                              <div class="card-body">
+                                                <h6 class="card-title">Order Details</h6>
+                                                <p class="card-text mb-1"><strong>Product:</strong> <%= order.productName || 'Product' %></p>
+                                                <p class="card-text mb-1"><strong>Customer:</strong> <%= order.customerName || 'Customer' %></p>
+                                                <p class="card-text"><strong>Total:</strong> $<%= ((order.price || 0) * (order.quantity || 1)).toFixed(2) %></p>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <form action="/seller/orders/<%= order.id %>/delete" method="POST" class="d-inline">
+                                              <button type="submit" class="btn btn-danger">
+                                                <i class="bi bi-trash me-1"></i> Delete Order
+                                              </button>
+                                            </form>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  <% }) %>
+                                </tbody>
+                              </table>
                             </div>
-                          </div>
-                        <% }); %>
+                          <% } %>
+                        </div>
                       </div>
                     </div>
-                  <% } %>
-                <% } %>
-              </div>
 
-              <script>
-                function switchImage(thumbElement, src) {
-                  // Update main image
-                  document.getElementById('mainProductImage').src = src;
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                    <script>
+                      // Initialize tooltips
+                      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                      tooltipTriggerList.map(function (tooltipTriggerEl) {
+                        return new bootstrap.Tooltip(tooltipTriggerEl);
+                      });
 
-                  // Update active thumbnail
-                  document.querySelectorAll('.thumb-image').forEach(img => {
-                    img.classList.remove('active');
-                  });
-                  thumbElement.classList.add('active');
-                }
-
-                function addToFavorites(product) {
-                  // Implement your favorite functionality here
-                  console.log('Adding to favorites:', product);
-                  alert(`Added ${product.name} to your favorites!`);
-                }
-              </script>
-             <script>
-                function switchImage(thumbElement, src) {
-                  // Update main image
-                  document.getElementById('mainProductImage').src = src;
-
-                  // Update active thumbnail
-                  document.querySelectorAll('.thumb-image').forEach(img => {
-                    img.classList.remove('active');
-                  });
-                  thumbElement.classList.add('active');
-                }
-
-                function addToFavorites(product) {
-                  // Implement your favorite functionality here
-                  console.log('Adding to favorites:', product);
-                  alert(`Added ${product.name} to your favorites!`);
-                }
-              </script>
-              <script src="/js/favorites.js"></script>
-            </body>
-            </html>
+                      // Confirm before deleting
+                      document.querySelectorAll('.btn-outline-danger').forEach(btn => {
+                        btn.addEventListener('click', function(e) {
+                          if (!confirm('Are you sure you want to delete this order? This action cannot be undone.')) {
+                            e.preventDefault();
+                          }
+                        });
+                      });
+                    </script>
+                  </body>
+                  </html>
